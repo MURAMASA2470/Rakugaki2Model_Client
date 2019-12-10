@@ -41,8 +41,8 @@ export default {
       this.clrBtn = document.getElementById('clear')
 
       // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
-      this.setBgColor(bgColor)
-      this.setCvSize(cvWidth, cvHeight)
+      this.setBgColor()
+      this.setCvSize()
 
       // canvas上でのイベント
       this.cv.addEventListener('mousedown', () => { this.clickFlg = 1 })
@@ -54,7 +54,7 @@ export default {
       // 描画クリア
       this.clrBtn.addEventListener('click', () => {
         this.ctx.clearRect(0,0,cvWidth,cvHeight)
-        this.setBgColor()
+        this.setBgColor(bgColor)
       })
       // canvasを画像で保存
       this.dlBtn.addEventListener('click', () => {
@@ -65,10 +65,10 @@ export default {
   },
   methods: {
     // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
-    setBgColor: function(color) {
+    setBgColor: function(color=bgColor, w=cvWidth, h=cvHeight) {
       this.ctx.fillStyle = color
-      this.ctx.fillRect(0,0,cvWidth,cvHeight)
-      console.log('genda')
+      this.ctx.fillRect(0,0,w,h)
+      console.log(color, w, h)
     },
     // 描画処理
     draw: function(x, y) {
@@ -85,7 +85,7 @@ export default {
       }
       this.ctx.stroke()
     },
-    setCvSize: function(w, h) {
+    setCvSize: function(w=cvWidth, h=cvHeight) {
       this.cv.width = w
       this.cv.height = h
     }
