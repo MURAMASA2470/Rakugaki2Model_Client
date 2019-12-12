@@ -1,7 +1,8 @@
 <template>
 <div>
-  <h1>oooon</h1>
-  <canvas id="cv" ref="canvas"></canvas>
+  <v-sheet elevation="14">
+    <canvas id="cv" ref="canvas"></canvas>
+  </v-sheet>
   <a class="btn" id="download">甲村</a>
   <button id="clear">バイバイ( ^_^)/~~~</button>
 </div>
@@ -9,16 +10,14 @@
 
 <style lang="css" scoped>
   #cv {
-    /* width: 500px;
-    height: 500px; */
     border: solid 1px black;
   }
 </style>
 
 <script>
 
-const cvWidth = 500
-const cvHeight = 500
+const cvWidth = 700
+const cvHeight = 700
 const cvColor = '0,0,0,1'
 const cvBold = 1
 const bgColor = 'rgb(255,255,255)'
@@ -88,6 +87,8 @@ export default {
     setCvSize: function(w=cvWidth, h=cvHeight) {
       this.cv.width = w
       this.cv.height = h
+      this.cv.parentElement.style.width = w + "px"
+      this.cv.parentElement.style.height = h + "px"
     }
   }
 }
