@@ -7,7 +7,6 @@
         <canvas id="cv" ref="canvas"></canvas>
       </v-sheet>
       <div class="btn-group">
-        <!-- <n-link to="/" class="v-btn" id="download">甲村</n-link> -->
         <v-btn href=" " class="v-btn info" id="download">保存</v-btn>
         <v-btn href=" " id="clear" color="blue-grey" dark>クリア</v-btn>
       </div>
