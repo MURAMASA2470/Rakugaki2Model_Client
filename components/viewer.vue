@@ -1,5 +1,5 @@
 <template>
-  <canvas id="canvas" width="600" height="400"></canvas>
+  <canvas id="canvas" width="500" height="450"></canvas>
 </template>
 
 <script>
@@ -21,18 +21,30 @@ export default {
     return { scene, renderer, camera, light, /*geometry, material, cube,*/ loader, model };
   },
   async mounted() {
-    const $canvas = document.getElementById("canvas");
+    this.objRender()
+
+  },
+  methods: {
+    animate() {
+      requestAnimationFrame(this.animate);
+
+      this.model.rotation.y += 0.01;
+
+      this.renderer.render(this.scene, this.camera);
+    },
+    objRender() {
+      const $canvas = document.getElementById("canvas");
     // canvasを後付けで設定する方法あったら教えてほしいー
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
       canvas: $canvas
     });
-    this.renderer.setSize(800, 600)
+    this.renderer.setSize(500, 450)
 
     let self = this
 
     let task = new Promise((resolve, reject) => {
-      self.loader.load("./sample.obj", function(object){
+      self.loader.load(this.modelName, function(object){
         let model = object.clone();
         model.lookAt(0,9,0)
         model.scale.set(4, 4, 4);            // 縮尺の初期化
@@ -61,16 +73,12 @@ export default {
     }).catch((e) => {
       console.log(e)
     })
-
-  },
-  methods: {
-    animate() {
-      requestAnimationFrame(this.animate);
-
-      this.model.rotation.y += 0.01;
-
-      this.renderer.render(this.scene, this.camera);
     }
+  },
+  props: {
+    modelName: String,
+    width: Number,
+    height: Number
   }
 };
 </script>

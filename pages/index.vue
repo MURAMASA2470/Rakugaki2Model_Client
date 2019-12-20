@@ -7,44 +7,54 @@
         <canvas id="cv" ref="canvas"></canvas>
       </v-sheet>
       <div class="btn-group">
-        <v-btn href=" " class="v-btn info" id="download">保存</v-btn>
-        <v-btn href=" " id="clear" color="blue-grey" dark>クリア</v-btn>
+        <v-btn href="#" class="v-btn info" id="download">保存</v-btn>
+        <v-btn href="#" id="clear" color="blue-grey" dark>クリア</v-btn>
       </div>
     </v-flex>
 
     <v-flex xs5 class="menu">
        <v-item-group>
         <v-container pa-0>
-          <!-- <v-layout wrap> -->
+          <v-layout wrap>
             <v-flex
               v-for="n in 12"
               :key="n"
-              xs12
+              xs6
             >
               <v-item>
                 <v-card
-                  slot-scope="{ active, toggle }"
-                  :color="active ? 'primary' : ''"
                   class="d-flex align-center menu-item"
                   dark
-                  height="100"
-                  width="90%"
-                  @click="toggle"
+                  height="275"
+                  width="275"
+                  @click="dialog = true"
                 >
-                  <v-scroll-y-transition>
+                  <!-- <v-scroll-y-transition>
                     <div
                       v-if="active"
                       class="display-3 text-xs-center"
                     >
                       Active
                     </div>
-                  </v-scroll-y-transition>
+                  </v-scroll-y-transition> -->
                 </v-card>
               </v-item>
             </v-flex>
-          <!-- </v-layout> -->
+          </v-layout>
         </v-container>
       </v-item-group>
+
+      <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+
+      <div class="dialog-wrapper" v-if="dialog">
+        <Viwer modelName="./sample.obj"></Viwer>
+        <v-btn class="info">ボタン</v-btn>
+      </div>
+    </v-dialog>
+
     </v-flex>
 
   </v-layout>
@@ -91,9 +101,18 @@
     .menu-item:first-child {
       margin-top: 0;
     }
+
+    .dialog-wrapper {
+      height: 510px;
+      width: 500px;
+      background-color: white;
+      border: solid 1px black;
+    }
 </style>
 
 <script>
+
+import Viwer from '~/components/viewer.vue'
 
 const cvWidth = 650
 const cvHeight = 650
@@ -108,7 +127,8 @@ export default {
       ctx: null,
       dlBtn: null,
       clrBtn: null,
-      clickFlg: 0
+      clickFlg: 0,
+      dialog: false
     }
   },
   mounted() {
@@ -169,6 +189,9 @@ export default {
       this.cv.parentElement.style.height = h + "px"
       document.getElementsByClassName("btn-group")[0].style.width = w + "px"
     }
+  },
+  components: {
+    Viwer
   }
 }
 </script>
