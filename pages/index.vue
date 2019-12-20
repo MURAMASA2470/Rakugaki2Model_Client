@@ -3,12 +3,12 @@
   <v-layout row>
 
     <v-flex xs7>
-      <v-sheet elevation="14" class="cv-wrapper">
+      <v-card elevation="14" class="cv-wrapper">
         <canvas id="cv" ref="canvas"></canvas>
-      </v-sheet>
+      </v-card>
       <div class="btn-group">
-        <v-btn href="#" class="v-btn info" id="download">保存</v-btn>
-        <v-btn href="#" id="clear" color="blue-grey" dark>クリア</v-btn>
+        <v-btn href="javascript:void(0)" class="v-btn info" id="download">保存</v-btn>
+        <v-btn href="javascript:void(0)" id="clear" color="blue-grey" dark>クリア</v-btn>
       </div>
     </v-flex>
 
@@ -22,9 +22,11 @@
               xs6
             >
               <v-item>
+                <v-hover
+                  v-slot:default="{ hover }">
                 <v-card
                   class="d-flex align-center menu-item"
-                  dark
+                  :elevation="hover ? 18 : 4"
                   height="275"
                   width="275"
                   @click="dialog = true"
@@ -38,6 +40,7 @@
                     </div>
                   </v-scroll-y-transition> -->
                 </v-card>
+                </v-hover>
               </v-item>
             </v-flex>
           </v-layout>
@@ -71,7 +74,7 @@
 }
 
   #cv {
-    border: solid 1px black;
+    /* border: solid 1px black; */
   }
 
   .btn-group {
@@ -128,7 +131,8 @@ export default {
       dlBtn: null,
       clrBtn: null,
       clickFlg: 0,
-      dialog: false
+      dialog: false,
+      w: cvWidth, h: cvHeight
     }
   },
   mounted() {
