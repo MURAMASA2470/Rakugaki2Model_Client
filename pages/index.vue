@@ -19,7 +19,7 @@
         >
 
         <div class="dialog-wrapper">
-          <canvas id="trnsdcv" width="500" height="500"></canvas>
+          <canvas id="trnsdcv" width="256" height="256"></canvas>
           <v-btn class="info">ボタン</v-btn>
         </div>
       </v-dialog>
