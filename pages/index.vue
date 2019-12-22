@@ -10,7 +10,7 @@
           <!-- <v-btn href="javascript:void(0)" class="v-btn info" id="download">保存</v-btn> -->
           <v-btn href="javascript:void(0)" class="v-btn info" id="generate">画像生成</v-btn>
           <v-btn href="javascript:void(0)" id="clear" color="blue-grey" dark>クリア</v-btn>
-          <v-btn href="javascript:void(0)" class="v-btn error mt-1" @click="imagePut">テスト用</v-btn>
+          <v-btn href="javascript:void(0)" class="v-btn error mt-1" @click="imagePut">デモ用</v-btn>
         </div>
 
         <v-dialog v-model="genDialog" width="500">
