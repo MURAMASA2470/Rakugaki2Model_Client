@@ -13,10 +13,10 @@
           <v-btn href="javascript:void(0)" class="v-btn error mt-1" @click="imagePut">デモ用</v-btn>
         </div>
 
-        <v-dialog v-model="genDialog" width="500">
-          <div class="dialog-wrapper">
-            <canvas id="trnsdcv" width="256" height="256"></canvas>
-            <v-btn class="info">ボタン</v-btn>
+        <v-dialog v-model="genDialog" width="256" height="300">
+          <div class="dialog-wrapper2">
+            <canvas id="trnsdcv" width="300" height="256"></canvas>
+            <v-btn class="info mx-5" id="gen">生成</v-btn>
           </div>
         </v-dialog>
       </v-flex>
@@ -54,7 +54,7 @@
         <v-dialog v-model="dialog" width="500">
           <div class="dialog-wrapper" v-if="dialog">
             <Viwer modelName="./sample.obj"></Viwer>
-            <v-btn class="info">ボタン</v-btn>
+            <!-- <v-btn class="info">ボタン</v-btn> -->
           </div>
         </v-dialog>
       </v-flex>
@@ -114,6 +114,12 @@
   background-color: white;
   border: solid 1px black;
 }
+.dialog-wrapper2 {
+  height: 300px;
+  width: 256px;
+  background-color: white;
+  border: solid 1px black;
+}
 </style>
 
 <script>
@@ -158,6 +164,8 @@ export default {
     this.dlBtn = document.getElementById("download");
     this.clrBtn = document.getElementById("clear");
     this.genBtn = document.getElementById("generate");
+
+    
 
     // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
     this.setCvSize();
@@ -254,6 +262,7 @@ export default {
     imagePut() {
       let imgTest = new Image();
       imgTest.src = "./test.png";
+      // console.log(imgTest)
       this.ctx.drawImage(imgTest, 0, 0, 256, 256);
     }
   },
