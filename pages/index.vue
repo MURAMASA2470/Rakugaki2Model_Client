@@ -3,13 +3,17 @@
     <v-layout row>
       <v-flex xs7>
         <v-card elevation="14" class="cv-wrapper">
-          <canvas id="cv" ref="canvas"></canvas>
-          <canvas id="tmpcv" width="256" height="256"></canvas>
+          <canvas id="cv" ref="canvas"
+            @mousedown="cvMousedown()"
+            @mouseup="cvMouseup()"
+            @mousemove="cvMousemove"
+          ></canvas>
+          <!-- <canvas id="tmpcv" width="256" height="256"></canvas> -->
         </v-card>
         <div class="btn-group">
           <!-- <v-btn href="javascript:void(0)" class="v-btn info" id="download">保存</v-btn> -->
           <v-btn href="javascript:void(0)" id="generate" class="v-btn info" @click="transfer()">画像生成</v-btn>
-          <v-btn href="javascript:void(0)" id="clear" color="blue-grey" dark>クリア</v-btn>
+          <v-btn href="javascript:void(0)" id="clear" color="blue-grey" dark @click="cvClear()">クリア</v-btn>
           <v-btn href="javascript:void(0)" id="demo" class="v-btn error mt-1" @click="imagePut('./test.png')">デモ用</v-btn>
         </div>
 
@@ -143,7 +147,7 @@ export default {
       clrBtn: null,
       genBtn: null,
       demoBtn: null,
-      clickFlg: 0,
+      clickFlg: false,
       dialog: false,
       genDialog: false,
       trnsdcv: null,
@@ -170,27 +174,6 @@ export default {
     // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
     this.setCvSize()
     this.setBgColor()
-
-    // canvas上でのイベント
-    this.cv.addEventListener("mousedown", () => { this.clickFlg = 1 })
-    this.cv.addEventListener("mouseup", () => { this.clickFlg = 0 })
-    this.cv.addEventListener("mousemove", (e) => {
-      if (!this.clickFlg) return false
-      this.draw(e.offsetX, e.offsetY)
-    })
-    // 描画クリア
-    this.clrBtn.addEventListener("click", () => {
-      this.ctx.clearRect(0, 0, cvWidth, cvHeight)
-      this.setBgColor(bgColor)
-    })
-    // canvasを画像で保存
-    // this.dlBtn.addEventListener('click', () => {
-    //   this.dlBtn.href = this.cv.toDataURL("image/jpeg")
-    //   this.dlBtn.download = 'komura.jpeg'
-    // })
-    // canvasの画像を使ってpix2pix
-    // this.genBtn.addEventListener("click", this.transfer())
-    // this.demoBtn.addEventListener("click", this.imagePut("./test.png"))
 
     //pix2pixモデルのロード
     console.log("ml5 ver: ", ml5.version)
@@ -250,10 +233,26 @@ export default {
 
         this.pix2pix.transfer(this.cv, (err, result) => {
           console.log(result)
+          this.trnsdctx.drawImage(result, 0, 0, 256, 256)
         })
         // this.trnsdctx.drawImage(image, 0, 0, 650, 650, 0, 0, 256, 256)
       }, 500)
-    }
+    },
+    cvMousedown() { this.clickFlg = 1 },
+    cvMouseup() { this.clickFlg = 0 },
+    cvMousemove(e) {
+      if (!this.clickFlg)
+        return false
+      this.draw(e.offsetX, e.offsetY)
+    },
+    cvClear() {
+      this.ctx.clearRect(0, 0, cvWidth, cvHeight)
+      this.setBgColor(bgColor)
+    },
+    // cvDownload() {
+    //   this.dlBtn.href = this.cv.toDataURL("image/jpeg")
+    //   this.dlBtn.download = 'komura.jpeg'
+    // }
   },
   components: {
     Viwer
