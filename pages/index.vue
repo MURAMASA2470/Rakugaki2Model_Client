@@ -129,6 +129,8 @@
 <script>
 import Viwer from "~/components/viewer.vue"
 
+import axios from 'axios'
+
 const cvWidth = 256
 const cvHeight = 256
 const cvColor = "0,0,0,1"
@@ -232,8 +234,17 @@ export default {
         this.trnsdctx = this.trnsdcv.getContext("2d")
 
         this.pix2pix.transfer(this.cv, (err, result) => {
-          console.log(result)
-          this.trnsdctx.drawImage(result, 0, 0, 256, 256)
+          console.log(1)
+          // this.trnsdctx.drawImage(result, 0, 0, 256, 256)
+          const serverUrl = '/api/generate'
+          let params = new URLSearchParams();
+          params.append('base64', result.src)
+          axios.post(serverUrl, params)
+          .then((r) => {
+            console.log(r)
+          }).catch((e) => {
+            console.log(e)
+          })
         })
         // this.trnsdctx.drawImage(image, 0, 0, 650, 650, 0, 0, 256, 256)
       }, 500)
