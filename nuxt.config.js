@@ -35,6 +35,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    // { src: 'plugins/axios.js', ssr: false }
   ],
   /*
   ** Nuxt.js modules
@@ -43,13 +44,19 @@ export default {
     '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    // cros domain対策
+    '@nuxtjs/proxy'
   ],
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    proxy: true,
+  },
+  proxy: {
+    '/api': 'http://localhost:8888'
   },
   /*
   ** vuetify module configuration
