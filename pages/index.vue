@@ -2,6 +2,7 @@
   <div class="container">
     <v-layout row>
       <v-flex xs7>
+        <v-select class="" label="画像生成モデル選択" v-model="selectedModel" :items="models" @change="loadModel"></v-select>
         <v-card elevation="14" class="cv-wrapper">
           <canvas id="cv" ref="canvas"
             @mousedown="cvMousedown()"
@@ -156,7 +157,9 @@ export default {
       tmpctx: null,
       pix2pix: null,
       w: cvWidth,
-      h: cvHeight
+      h: cvHeight,
+      models: ['chair', 'bed'],
+      selectedModel: null,
     }
   },
   mounted() {
@@ -253,6 +256,12 @@ export default {
     //   this.dlBtn.href = this.cv.toDataURL("image/jpeg")
     //   this.dlBtn.download = 'komura.jpeg'
     // }
+    loadModel() {
+      //pix2pixモデルの再ロード
+      this.pix2pix = ml5.pix2pix("./"+this.selectedModel+".pict", () => {
+        console.log(this.selectedModel+" Model Loaded.")
+      })
+    },
   },
   components: {
     Viwer
