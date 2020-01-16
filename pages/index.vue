@@ -2,6 +2,7 @@
   <div class="container">
     <v-layout row>
       <v-flex xs7>
+        <v-select class="selector" label="画像生成モデル選択" v-model="selectedPixModel" :items="pixModels" @change="loadModel"></v-select>
         <v-card elevation="14" class="cv-wrapper">
           <canvas id="cv" ref="canvas"
             @mousedown="cvMousedown()"
@@ -125,6 +126,11 @@
   background-color: white;
   border: solid 1px black;
 }
+
+.selector {
+  width: 256px;
+  margin: 0 auto;
+}
 </style>
 
 <script>
@@ -161,6 +167,8 @@ export default {
       pix2pix: null,
       w: cvWidth,
       h: cvHeight,
+      pixModels: ['chair', 'bed'],
+      selectedPixModel: 'chair',
       models: null,
       selectedModel: null
     }
@@ -191,10 +199,11 @@ export default {
     })
 
     //pix2pixモデルのロード
-    console.log("ml5 ver: ", ml5.version)
-    this.pix2pix = ml5.pix2pix("./chair.pict", () => {
-      console.log("Model Loaded.")
-    })
+    // console.log("ml5 ver: ", ml5.version)
+    // this.pix2pix = ml5.pix2pix("./chair.pict", () => {
+    //   console.log("Model Loaded.")
+    // })
+    this.loadModel()
   },
   methods: {
     // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
@@ -296,6 +305,12 @@ export default {
     //   this.dlBtn.href = this.cv.toDataURL("image/jpeg")
     //   this.dlBtn.download = 'komura.jpeg'
     // }
+    loadModel() {
+      //pix2pixモデルの再ロード
+      this.pix2pix = ml5.pix2pix("./"+this.selectedPixModel+".pict", () => {
+        console.log(this.selectedPixModel+" Model Loaded.")
+      })
+    },
   },
   components: {
     Viwer
