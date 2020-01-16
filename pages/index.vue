@@ -2,7 +2,7 @@
   <div class="container">
     <v-layout row>
       <v-flex xs7>
-        <v-select class="" label="画像生成モデル選択" v-model="selectedModel" :items="models" @change="loadModel"></v-select>
+        <v-select wstyle="width: 300px;" label="画像生成モデル選択" v-model="selectedModel" :items="models" @change="loadModel"></v-select>
         <v-card elevation="14" class="cv-wrapper">
           <canvas id="cv" ref="canvas"
             @mousedown="cvMousedown()"
@@ -159,7 +159,7 @@ export default {
       w: cvWidth,
       h: cvHeight,
       models: ['chair', 'bed'],
-      selectedModel: null,
+      selectedModel: 'chair',
     }
   },
   mounted() {
@@ -179,10 +179,11 @@ export default {
     this.setBgColor()
 
     //pix2pixモデルのロード
-    console.log("ml5 ver: ", ml5.version)
-    this.pix2pix = ml5.pix2pix("./chair.pict", () => {
-      console.log("Model Loaded.")
-    })
+    // console.log("ml5 ver: ", ml5.version)
+    // this.pix2pix = ml5.pix2pix("./chair.pict", () => {
+    //   console.log("Model Loaded.")
+    // })
+    this.loadModel()
   },
   methods: {
     // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
