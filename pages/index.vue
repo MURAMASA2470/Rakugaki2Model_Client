@@ -167,7 +167,7 @@ export default {
       pix2pix: null,
       w: cvWidth,
       h: cvHeight,
-      pixModels: ['chair', 'bed'],
+      pixModels: ['chair', 'table', 'bed'],
       selectedPixModel: 'chair',
       models: null,
       selectedModel: null
