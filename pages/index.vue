@@ -2,17 +2,9 @@
   <div class="container">
     <v-layout row>
       <v-flex xs7>
-        <v-select
-          class="selector"
-          label="画像生成モデル選択"
-          v-model="selectedModel"
-          :items="models"
-          @change="loadModel"
-        ></v-select>
+        <v-select class="selector" label="画像生成モデル選択" v-model="selectedModel" :items="models" @change="loadModel"></v-select>
         <v-card elevation="14" class="cv-wrapper">
-          <canvas
-            id="cv"
-            ref="canvas"
+          <canvas id="cv" ref="canvas"
             @mousedown="cvMousedown()"
             @mouseup="cvMouseup()"
             @mousemove="cvMousemove"
@@ -23,12 +15,7 @@
           <!-- <v-btn href="javascript:void(0)" class="v-btn info" id="download">保存</v-btn> -->
           <v-btn href="javascript:void(0)" id="generate" class="v-btn info" @click="transfer()">画像生成</v-btn>
           <v-btn href="javascript:void(0)" id="clear" color="blue-grey" dark @click="cvClear()">クリア</v-btn>
-          <v-btn
-            href="javascript:void(0)"
-            id="demo"
-            class="v-btn error mt-1"
-            @click="imagePut('./test.png')"
-          >デモ用</v-btn>
+          <v-btn href="javascript:void(0)" id="demo" class="v-btn error mt-1" @click="imagePut('./test.png')">デモ用</v-btn>
         </div>
 
         <v-dialog v-model="genDialog" width="256" height="300">
@@ -146,13 +133,13 @@
 </style>
 
 <script>
-import Viwer from "~/components/viewer.vue";
+import Viwer from "~/components/viewer.vue"
 
-const cvWidth = 256;
-const cvHeight = 256;
-const cvColor = "0,0,0,1";
-const cvBold = 1;
-const bgColor = "rgb(255,255,255)";
+const cvWidth = 256
+const cvHeight = 256
+const cvColor = "0,0,0,1"
+const cvBold = 1
+const bgColor = "rgb(255,255,255)"
 
 export default {
   head: {
@@ -176,102 +163,100 @@ export default {
       pix2pix: null,
       w: cvWidth,
       h: cvHeight,
-      models: ["chair", "bed"],
-      selectedModel: "chair"
-    };
+      models: ['chair', 'bed'],
+      selectedModel: 'chair',
+    }
   },
   mounted() {
-    this.cv = document.getElementById("cv");
-    this.ctx = this.cv.getContext("2d");
+    this.cv = document.getElementById("cv")
+    this.ctx = this.cv.getContext("2d")
 
-    this.tmpcv = document.getElementById("tmpcv");
-    this.tmpctx = this.cv.getContext("2d");
+    this.tmpcv = document.getElementById("tmpcv")
+    this.tmpctx = this.cv.getContext("2d")
 
-    this.dlBtn = document.getElementById("download");
-    this.clrBtn = document.getElementById("clear");
-    this.genBtn = document.getElementById("generate");
-    this.demoBtn = document.getElementById("demo");
+    this.dlBtn = document.getElementById("download")
+    this.clrBtn = document.getElementById("clear")
+    this.genBtn = document.getElementById("generate")
+    this.demoBtn = document.getElementById("demo")
 
     // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
-    this.setCvSize();
-    this.setBgColor();
+    this.setCvSize()
+    this.setBgColor()
 
     //pix2pixモデルのロード
     // console.log("ml5 ver: ", ml5.version)
     // this.pix2pix = ml5.pix2pix("./chair.pict", () => {
     //   console.log("Model Loaded.")
     // })
-    this.loadModel();
+    this.loadModel()
   },
   methods: {
     // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
     setBgColor: function(color = bgColor, w = cvWidth, h = cvHeight) {
-      this.ctx.fillStyle = color;
-      this.ctx.fillRect(0, 0, w, h);
+      this.ctx.fillStyle = color
+      this.ctx.fillRect(0, 0, w, h)
 
-      this.tmpctx.fillStyle = color;
-      this.tmpctx.fillRect(0, 0, 256, 256);
+      this.tmpctx.fillStyle = color
+      this.tmpctx.fillRect(0, 0, 256, 256)
     },
     // 描画処理
     draw: function(x, y) {
-      this.ctx.lineWidth = cvBold;
-      this.ctx.strokeStyle = "rgba(" + cvColor + ")";
+      this.ctx.lineWidth = cvBold
+      this.ctx.strokeStyle = "rgba(" + cvColor + ")"
       // 初回処理の判定
       if (this.clickFlg == "1") {
-        this.clickFlg = "2";
-        this.ctx.beginPath();
-        this.ctx.lineCap = "round"; //　線を角丸にする
-        this.ctx.moveTo(x, y);
+        this.clickFlg = "2"
+        this.ctx.beginPath()
+        this.ctx.lineCap = "round" //　線を角丸にする
+        this.ctx.moveTo(x, y)
       } else {
-        this.ctx.lineTo(x, y);
+        this.ctx.lineTo(x, y)
       }
-      this.ctx.stroke();
+      this.ctx.stroke()
     },
     setCvSize: function(w = cvWidth, h = cvHeight) {
-      this.cv.width = w;
-      this.cv.height = h;
-      this.cv.parentElement.style.width = w + "px";
-      this.cv.parentElement.style.height = h + "px";
-      document.getElementsByClassName("btn-group")[0].style.width = w + "px";
-    },
-    imagePut(img = "./test.png") {
-      console.log(img);
-      let imgTest = new Image();
-      imgTest.src = img;
+      this.cv.width = w
+      this.cv.height = h
+      this.cv.parentElement.style.width = w + "px"
+      this.cv.parentElement.style.height = h + "px"
+      document.getElementsByClassName("btn-group")[0].style.width = w + "px"
 
-      this.ctx.drawImage(imgTest, 0, 0, 256, 256);
+    },
+    imagePut(img="./test.png") {
+      console.log(img)
+      let imgTest = new Image()
+      imgTest.src = img
+
+      this.ctx.drawImage(imgTest, 0, 0, 256, 256)
     },
     transfer() {
       // let image = this.ctx.getImageData(0, 0, cvWidth, cvHeight)
       // this.tmpctx.putImageData(image, 0, 0)
       // console.log(this.tmpcv.toDataURL("image/jpeg"))
-      this.genDialog = true;
-      console.log("transfer");
+      this.genDialog = true
+      console.log('transfer')
       // エレメントが描写されるまで待つ
       setTimeout(() => {
-        this.trnsdcv = document.getElementById("trnsdcv");
-        this.trnsdctx = this.trnsdcv.getContext("2d");
+        this.trnsdcv = document.getElementById("trnsdcv")
+        this.trnsdctx = this.trnsdcv.getContext("2d")
 
         this.pix2pix.transfer(this.cv, (err, result) => {
-          console.log(result);
-          this.trnsdctx.drawImage(result, 0, 0, 256, 256);
-        });
+          console.log(result)
+          this.trnsdctx.drawImage(result, 0, 0, 256, 256)
+        })
         // this.trnsdctx.drawImage(image, 0, 0, 650, 650, 0, 0, 256, 256)
-      }, 500);
+      }, 500)
     },
-    cvMousedown() {
-      this.clickFlg = 1;
-    },
-    cvMouseup() {
-      this.clickFlg = 0;
-    },
+    cvMousedown() { this.clickFlg = 1 },
+    cvMouseup() { this.clickFlg = 0 },
     cvMousemove(e) {
-      if (!this.clickFlg) return false;
-      this.draw(e.offsetX, e.offsetY);
+      if (!this.clickFlg)
+        return false
+      this.draw(e.offsetX, e.offsetY)
     },
     cvClear() {
-      this.ctx.clearRect(0, 0, cvWidth, cvHeight);
-      this.setBgColor(bgColor);
+      this.ctx.clearRect(0, 0, cvWidth, cvHeight)
+      this.setBgColor(bgColor)
     },
     // cvDownload() {
     //   this.dlBtn.href = this.cv.toDataURL("image/jpeg")
@@ -279,10 +264,10 @@ export default {
     // }
     loadModel() {
       //pix2pixモデルの再ロード
-      this.pix2pix = ml5.pix2pix("./" + this.selectedModel + ".pict", () => {
-        console.log(this.selectedModel + " Model Loaded.");
-      });
-    }
+      this.pix2pix = ml5.pix2pix("./"+this.selectedModel+".pict", () => {
+        console.log(this.selectedModel+" Model Loaded.")
+      })
+    },
   },
   components: {
     Viwer
