@@ -29,7 +29,7 @@
         <v-item-group>
           <v-container pa-0>
             <v-layout wrap>
-              <v-flex v-for="n in 12" :key="n" xs6>
+              <v-flex v-for="model in models" :key="model.index" xs6>
                 <v-item>
                   <v-hover v-slot:default="{ hover }">
                     <v-card
@@ -37,8 +37,9 @@
                       :elevation="hover ? 18 : 4"
                       height="275"
                       width="275"
-                      @click="dialog = true"
+                      @click="dialog = true; selectedModel = model.file"
                     >
+                    <v-img :src="'./output/images/'+model.file+'.jpg'"></v-img>
                       <!-- <v-scroll-y-transition>
                     <div
                       v-if="active"
@@ -57,7 +58,7 @@
 
         <v-dialog v-model="dialog" width="500">
           <div class="dialog-wrapper" v-if="dialog">
-            <Viwer modelName="./sample.obj"></Viwer>
+            <Viwer :modelName="'./output/models/'+selectedModel+'.obj'"></Viwer>
             <!-- <v-btn class="info">ボタン</v-btn> -->
           </div>
         </v-dialog>
@@ -159,7 +160,9 @@ export default {
       tmpctx: null,
       pix2pix: null,
       w: cvWidth,
-      h: cvHeight
+      h: cvHeight,
+      models: null,
+      selectedModel: null
     }
   },
   mounted() {
@@ -177,6 +180,15 @@ export default {
     // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
     this.setCvSize()
     this.setBgColor()
+
+    axios.get('/api/').then(
+      (models) => {
+        this.models = models.data.reverse()
+        console.log(this.models)
+      }
+    ).catch((e) => {
+      console.log(e)
+    })
 
     //pix2pixモデルのロード
     console.log("ml5 ver: ", ml5.version)
@@ -254,6 +266,14 @@ export default {
           axios.post(serverUrl, params)
           .then((r) => {
             console.log(r)
+            axios.get('/api/').then(
+              (models) => {
+                this.models = models.data.reverse()
+                console.log(this.models)
+              }
+            ).catch((e) => {
+              console.log(e)
+            })
           }).catch((e) => {
             console.log(e)
           })
