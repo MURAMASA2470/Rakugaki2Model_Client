@@ -2,7 +2,7 @@
   <div class="container">
     <v-layout row>
       <v-flex xs7>
-        <v-select class="selector" label="画像生成モデル選択" v-model="selectedModel" :items="models" @change="loadModel"></v-select>
+        <v-select class="selector" label="画像生成モデル選択" v-model="selectedPixModel" :items="pixModels" @change="loadModel"></v-select>
         <v-card elevation="14" class="cv-wrapper">
           <canvas id="cv" ref="canvas"
             @mousedown="cvMousedown()"
@@ -19,7 +19,7 @@
         </div>
 
         <v-dialog v-model="genDialog" width="256" height="300">
-          <div class="dialog-wrapper2">
+          <div class="dialog-wrapper2" v-show="isShow">
             <canvas id="trnsdcv" width="300" height="256"></canvas>
             <v-btn class="info mx-5" id="gen">生成</v-btn>
           </div>
@@ -30,7 +30,7 @@
         <v-item-group>
           <v-container pa-0>
             <v-layout wrap>
-              <v-flex v-for="n in 12" :key="n" xs6>
+              <v-flex v-for="model in models" :key="model.index" xs6>
                 <v-item>
                   <v-hover v-slot:default="{ hover }">
                     <v-card
@@ -38,8 +38,9 @@
                       :elevation="hover ? 18 : 4"
                       height="275"
                       width="275"
-                      @click="dialog = true"
+                      @click="dialog = true; selectedModel = model.file"
                     >
+                    <v-img :src="'./output/images/'+model.file+'.jpg'"></v-img>
                       <!-- <v-scroll-y-transition>
                     <div
                       v-if="active"
@@ -58,7 +59,7 @@
 
         <v-dialog v-model="dialog" width="500">
           <div class="dialog-wrapper" v-if="dialog">
-            <Viwer modelName="./sample.obj"></Viwer>
+            <Viwer :modelName="'./output/models/'+selectedModel+'.obj'"></Viwer>
             <!-- <v-btn class="info">ボタン</v-btn> -->
           </div>
         </v-dialog>
@@ -135,6 +136,8 @@
 <script>
 import Viwer from "~/components/viewer.vue"
 
+import axios from 'axios'
+
 const cvWidth = 256
 const cvHeight = 256
 const cvColor = "0,0,0,1"
@@ -156,6 +159,7 @@ export default {
       clickFlg: false,
       dialog: false,
       genDialog: false,
+      isShow: false,
       trnsdcv: null,
       trnsdctx: null,
       tmpcv: null,
@@ -163,8 +167,10 @@ export default {
       pix2pix: null,
       w: cvWidth,
       h: cvHeight,
-      models: ['chair', 'bed'],
-      selectedModel: 'chair',
+      pixModels: ['chair', 'bed'],
+      selectedPixModel: 'chair',
+      models: null,
+      selectedModel: null
     }
   },
   mounted() {
@@ -183,6 +189,15 @@ export default {
     this.setCvSize()
     this.setBgColor()
 
+    axios.get('/api/').then(
+      (models) => {
+        this.models = models.data.reverse()
+        console.log(this.models)
+      }
+    ).catch((e) => {
+      console.log(e)
+    })
+
     //pix2pixモデルのロード
     // console.log("ml5 ver: ", ml5.version)
     // this.pix2pix = ml5.pix2pix("./chair.pict", () => {
@@ -192,9 +207,9 @@ export default {
   },
   methods: {
     // canvasの背景色を設定(指定がない場合にjpeg保存すると背景が黒になる)
-    setBgColor: function(color = bgColor, w = cvWidth, h = cvHeight) {
-      this.ctx.fillStyle = color
-      this.ctx.fillRect(0, 0, w, h)
+    setBgColor: function(color = bgColor, w = cvWidth, h = cvHeight, ctx=this.ctx) {
+      ctx.fillStyle = color
+      ctx.fillRect(0, 0, w, h)
 
       this.tmpctx.fillStyle = color
       this.tmpctx.fillRect(0, 0, 256, 256)
@@ -233,7 +248,11 @@ export default {
       // let image = this.ctx.getImageData(0, 0, cvWidth, cvHeight)
       // this.tmpctx.putImageData(image, 0, 0)
       // console.log(this.tmpcv.toDataURL("image/jpeg"))
+      setTimeout(() => {
+        this.isShow = true
+      }, 1000)
       this.genDialog = true
+
       console.log('transfer')
       // エレメントが描写されるまで待つ
       setTimeout(() => {
@@ -241,8 +260,32 @@ export default {
         this.trnsdctx = this.trnsdcv.getContext("2d")
 
         this.pix2pix.transfer(this.cv, (err, result) => {
-          console.log(result)
+          console.log(1)
           this.trnsdctx.drawImage(result, 0, 0, 256, 256)
+          const serverUrl = '/api/generate'
+
+          const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+          const N = 32
+          let hash = Array.from(Array(N)).map(()=>S[Math.floor(Math.random()*S.length)]).join('')
+
+          let params = new URLSearchParams();
+          params.append('base64', result.src)
+          params.append('user', 'user01')
+          params.append('file', hash)
+          axios.post(serverUrl, params)
+          .then((r) => {
+            console.log(r)
+            axios.get('/api/').then(
+              (models) => {
+                this.models = models.data.reverse()
+                console.log(this.models)
+              }
+            ).catch((e) => {
+              console.log(e)
+            })
+          }).catch((e) => {
+            console.log(e)
+          })
         })
         // this.trnsdctx.drawImage(image, 0, 0, 650, 650, 0, 0, 256, 256)
       }, 500)
@@ -254,8 +297,8 @@ export default {
         return false
       this.draw(e.offsetX, e.offsetY)
     },
-    cvClear() {
-      this.ctx.clearRect(0, 0, cvWidth, cvHeight)
+    cvClear(ctx=this.ctx) {
+      ctx.clearRect(0, 0, cvWidth, cvHeight)
       this.setBgColor(bgColor)
     },
     // cvDownload() {
@@ -264,8 +307,8 @@ export default {
     // }
     loadModel() {
       //pix2pixモデルの再ロード
-      this.pix2pix = ml5.pix2pix("./"+this.selectedModel+".pict", () => {
-        console.log(this.selectedModel+" Model Loaded.")
+      this.pix2pix = ml5.pix2pix("./"+this.selectedPixModel+".pict", () => {
+        console.log(this.selectedPixModel+" Model Loaded.")
       })
     },
   },

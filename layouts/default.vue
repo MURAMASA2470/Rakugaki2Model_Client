@@ -31,13 +31,17 @@
     <v-app-bar
       app
       color="cyan"
-      dark
     >
-      <!-- <v-spacer /> -->
 
-      <v-toolbar-title>Rakugaki2Model</v-toolbar-title>
+      <v-toolbar-title style="color: white;">Rakugaki2Model</v-toolbar-title>
 
+      <v-spacer />
       <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer" /> -->
+      <!-- <v-overflow-btn
+          :items="['a', 'b']"
+          label="Segmented Btn"
+          target="#dropdown-example"
+        ></v-overflow-btn> -->
     </v-app-bar>
 
     <v-content>
